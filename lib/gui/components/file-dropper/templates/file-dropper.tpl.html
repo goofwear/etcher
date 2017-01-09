@@ -1,0 +1,15 @@
+<div
+  ng-show="dropper.isHoverState"
+  class="file-dropper-wrap"
+  ng-class="{ 'file-dropper-no-overlay': !hasOverlay }"
+  os-dropzone="dropper.take($file)">
+    <div class="file-dropper-border">
+      <div class="file-dropper-figure">
+        <svg-icon
+          path="../../../assets/add-file.svg"
+          width="80px" height="auto"></svg-icon>
+        {{ ::dropper.formats.getAllExtensions().join(', ') }}
+      </div>
+    </div>
+</div>
+<div ng-hide="dropper.isHoverState && hasOverlay" ng-transclude></div>
