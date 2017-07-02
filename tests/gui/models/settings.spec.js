@@ -2,85 +2,75 @@
 
 const m = require('mochainon');
 const _ = require('lodash');
-const angular = require('angular');
-require('angular-mocks');
 const Store = require('../../../lib/gui/models/store');
+const settings = require('../../../lib/gui/models/settings');
 
-describe('Browser: SettingsModel', function() {
+describe('Browser: settings', function() {
 
-  beforeEach(angular.mock.module(
-    require('../../../lib/gui/models/settings')
-  ));
+  describe('settings', function() {
 
-  describe('SettingsModel', function() {
-
-    const SUPPORTED_KEYS = _.keys(Store.Defaults.get('settings').toJS());
-    let SettingsModel;
-
-    beforeEach(angular.mock.inject(function(_SettingsModel_) {
-      SettingsModel = _SettingsModel_;
-    }));
+    const DEFAULT_KEYS = _.keys(Store.Defaults.get('settings').toJS());
 
     beforeEach(function() {
-      this.settings = SettingsModel.getAll();
+      this.settings = settings.getAll();
     });
 
     afterEach(function() {
-      _.each(SUPPORTED_KEYS, (supportedKey) => {
-        SettingsModel.set(supportedKey, this.settings[supportedKey]);
+      _.each(DEFAULT_KEYS, (supportedKey) => {
+        settings.set(supportedKey, this.settings[supportedKey]);
       });
     });
 
     it('should be able to set and read values', function() {
-      const keyUnderTest = _.first(SUPPORTED_KEYS);
-      const originalValue = SettingsModel.get(keyUnderTest);
+      const keyUnderTest = _.sample(DEFAULT_KEYS);
+      const originalValue = settings.get(keyUnderTest);
 
-      SettingsModel.set(keyUnderTest, !originalValue);
-      m.chai.expect(SettingsModel.get(keyUnderTest)).to.equal(!originalValue);
-      SettingsModel.set(keyUnderTest, originalValue);
-      m.chai.expect(SettingsModel.get(keyUnderTest)).to.equal(originalValue);
+      settings.set(keyUnderTest, !originalValue);
+      m.chai.expect(settings.get(keyUnderTest)).to.equal(!originalValue);
+      settings.set(keyUnderTest, originalValue);
+      m.chai.expect(settings.get(keyUnderTest)).to.equal(originalValue);
     });
 
     describe('.set()', function() {
 
-      it('should throw if the key is not supported', function() {
-        m.chai.expect(function() {
-          SettingsModel.set('foobar', true);
-        }).to.throw('Unsupported setting: foobar');
+      it('should set an unknown key', function() {
+        m.chai.expect(settings.get('foobar')).to.be.undefined;
+        settings.set('foobar', true);
+        m.chai.expect(settings.get('foobar')).to.be.true;
       });
 
       it('should throw if no key', function() {
         m.chai.expect(function() {
-          SettingsModel.set(null, true);
+          settings.set(null, true);
         }).to.throw('Missing setting key');
       });
 
       it('should throw if key is not a string', function() {
         m.chai.expect(function() {
-          SettingsModel.set(1234, true);
+          settings.set(1234, true);
         }).to.throw('Invalid setting key: 1234');
       });
 
       it('should throw if setting an object', function() {
-        const keyUnderTest = _.first(SUPPORTED_KEYS);
+        const keyUnderTest = _.sample(DEFAULT_KEYS);
         m.chai.expect(function() {
-          SettingsModel.set(keyUnderTest, {
-            x: 1
+          settings.set(keyUnderTest, {
+            setting: 1
           });
-        }).to.throw('Invalid setting value: [object Object]');
+        }).to.throw(`Invalid setting value: [object Object] for ${keyUnderTest}`);
       });
 
       it('should throw if setting an array', function() {
-        const keyUnderTest = _.first(SUPPORTED_KEYS);
+        const keyUnderTest = _.sample(DEFAULT_KEYS);
         m.chai.expect(function() {
-          SettingsModel.set(keyUnderTest, [ 1, 2, 3 ]);
-        }).to.throw('Invalid setting value: 1,2,3');
+          settings.set(keyUnderTest, [ 1, 2, 3 ]);
+        }).to.throw(`Invalid setting value: 1,2,3 for ${keyUnderTest}`);
       });
 
       it('should set the key to undefined if no value', function() {
-        const keyUnderTest = _.first(SUPPORTED_KEYS);
-        SettingsModel.set(keyUnderTest);
-        m.chai.expect(SettingsModel.get(keyUnderTest)).to.be.undefined;
+        const keyUnderTest = _.sample(DEFAULT_KEYS);
+        settings.set(keyUnderTest);
+        m.chai.expect(settings.get(keyUnderTest)).to.be.undefined;
       });
 
     });
@@ -88,10 +78,10 @@ describe('Browser: SettingsModel', function() {
     describe('.getAll()', function() {
 
       it('should be able to read all values', function() {
-        const allValues = SettingsModel.getAll();
+        const allValues = settings.getAll();
 
-        _.each(SUPPORTED_KEYS, function(supportedKey) {
-          m.chai.expect(allValues[supportedKey]).to.equal(SettingsModel.get(supportedKey));
+        _.each(DEFAULT_KEYS, function(supportedKey) {
+          m.chai.expect(allValues[supportedKey]).to.equal(settings.get(supportedKey));
         });
       });
 

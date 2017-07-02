@@ -18,10 +18,10 @@ See the [RUNNING-LOCALLY.md][RUNNING-LOCALLY] guide.
 Developing
 ----------
 
-We rely on various `npm` scripts to perform some common tasks:
+We rely on various `make` targets to perform some common tasks:
 
-- `npm run lint`: Run the linter.
-- `npm run sass`: Compile SCSS files.
+- `make lint`: Run the linter.
+- `make sass`: Compile SCSS files.
 
 We make use of [EditorConfig] to communicate indentation, line endings and
 other text editing default. We encourage you to install the relevant plugin in
@@ -43,10 +43,6 @@ Use the following steps to ensure everything goes flawlessly:
 
 - Install the new version of the dependency. For example: `npm install --save
   <package>@<version>`. This will update the `npm-shrinkwrap.json` file.
-
-- Run `npm run shrinkwrap`. This is a small script that ensures that operating
-  system specific dependencies that could get included in the previous step are
-  removed from `npm-shrinkwrap.json`.
 
 - Commit *both* `package.json` and `npm-shrinkwrap.json`.
 
@@ -73,15 +69,30 @@ systems as they can before sending a pull request.
 *The test suite is run automatically by CI servers when you send a pull
 request.*
 
+Diffing Binaries
+----------------
+
+Binary files are tagged as "binary" in the `.gitattributes` file, but also have
+a `diff=hex` tag, which allows you to see hexdump-style diffs for binaries,
+if you add the following to either your global or repository-local git config:
+
+```sh
+$ git config diff.hex.textconv hexdump
+$ git config diff.hex.binary true
+```
+
+And global, respectively:
+
+```sh
+$ git config --global diff.hex.textconv hexdump
+$ git config --global diff.hex.binary true
+```
+
+If you don't have `hexdump` available on your platform,
+you can try [hxd], which is also a bit faster.
+
 Sending a pull request
 ----------------------
-
-We make use of [commitizen] to ensure certain commit conventions, since they
-will be used to auto-generate the CHANGELOG. The project already includes all
-necessary configuration, so you only have to install the commitizen cli tool
-(`npm install -g commitizen`) and commit by executing `git cz`, which will
-drive you through an interactive wizard to make sure your commit is perfectly
-crafted according to our guidelines.
 
 When sending a pull request, consider the following guidelines:
 
@@ -100,7 +111,7 @@ when your pull request is merged.
 
 - Write a descriptive pull request title.
 
-- Squash commits when possible, for example, when commiting review changes.
+- Squash commits when possible, for example, when committing review changes.
 
 Before your pull request can be merged, the following conditions must hold:
 
@@ -118,5 +129,5 @@ Don't hesitate to get in touch if you have any questions or need any help!
 [ARCHITECTURE]: https://github.com/resin-io/etcher/blob/master/docs/ARCHITECTURE.md
 [RUNNING-LOCALLY]: https://github.com/resin-io/etcher/blob/master/docs/RUNNING-LOCALLY.md
 [EditorConfig]: http://editorconfig.org
-[commitizen]: https://commitizen.github.io/cz-cli/#making-your-repo-commitizen-friendly
 [shrinkwrap]: https://docs.npmjs.com/cli/shrinkwrap
+[hxd]: https://github.com/jhermsmeier/hxd

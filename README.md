@@ -8,18 +8,30 @@ flashing an SDCard or USB drive is a pleasant and safe experience. It protects
 you from accidentally writing to your hard-drives, ensures every byte of data
 was written correctly and much more.
 
-[![dependencies](https://david-dm.org/resin-io/etcher.svg)](https://david-dm.org/resin-io/etcher.svg)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
-[![Build Status](https://travis-ci.org/resin-io/etcher.svg?branch=master)](https://travis-ci.org/resin-io/etcher)
-[![Build status](https://ci.appveyor.com/api/projects/status/e745k1gt39nik0t7/branch/master?svg=true)](https://ci.appveyor.com/project/resin-io/etcher/branch/master)
-[![Gitter](https://badges.gitter.im/resin-io/etcher.svg)](https://gitter.im/resin-io/etcher?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Stories in Ready](https://badge.waffle.io/resin-io/etcher.svg?label=in progress&title=In Progress)](https://waffle.io/resin-io/etcher)
+[![Current Release](https://img.shields.io/github/release/resin-io/etcher.svg?style=flat-square)](https://etcher.io)
+![License](https://img.shields.io/github/license/resin-io/etcher.svg?style=flat-square)
+[![Travis CI status](https://img.shields.io/travis/resin-io/etcher/master.svg?style=flat-square&label=linux%20|%20mac)](https://travis-ci.org/resin-io/etcher/branches)
+[![AppVeyor status](https://img.shields.io/appveyor/ci/resin-io/etcher/master.svg?style=flat-square&label=windows)](https://ci.appveyor.com/project/resin-io/etcher/branch/master)
+[![Dependency status](https://img.shields.io/david/resin-io/etcher.svg?style=flat-square)](https://david-dm.org/resin-io/etcher)
+[![Gitter Chat](https://img.shields.io/gitter/room/resin-io/etcher.svg?style=flat-square)](https://gitter.im/resin-io/etcher)
+[![Stories in Progress](https://img.shields.io/waffle/label/resin-io/etcher/in%20progress.svg?style=flat-square)](https://waffle.io/resin-io/etcher)
 
 ***
 
 [**Download**][etcher] | [**Support**][SUPPORT] | [**Documentation**][USER-DOCUMENTATION] | [**Contributing**][CONTRIBUTING] | [**Roadmap**][milestones] | [**CLI**][CLI]
 
 ![Etcher](https://raw.githubusercontent.com/resin-io/etcher/master/screenshot.png)
+
+Supported Operating Systems
+---------------------------
+
+- Linux (most distros)
+- macOS 10.9 and later
+- Microsoft Windows 7 and later
+
+Note that Etcher will run on any platform officially supported by
+[Electron][electron]. Read more in their
+[documentation][electron-supported-platforms].
 
 Installers
 ----------
@@ -48,6 +60,14 @@ installers for all supported operating systems.
     sudo apt-get install etcher-electron
     ```
 
+##### Uninstall
+
+```sh
+sudo apt-get remove etcher-electron
+sudo rm /etc/apt/sources.list.d/etcher.list
+sudo apt-get update
+```
+
 #### Brew Cask (macOS)
 
 Note that the Etcher Cask has to be updated manually to point to new versions,
@@ -56,6 +76,12 @@ release.
 
 ```sh
 brew cask install etcher
+```
+
+##### Uninstall
+
+```sh
+brew cask uninstall etcher
 ```
 
 Support
@@ -71,6 +97,8 @@ Etcher is free software, and may be redistributed under the terms specified in
 the [license].
 
 [etcher]: https://etcher.io
+[electron]: http://electron.atom.io
+[electron-supported-platforms]: http://electron.atom.io/docs/tutorial/supported-platforms/
 [SUPPORT]: https://github.com/resin-io/etcher/blob/master/SUPPORT.md
 [CONTRIBUTING]: https://github.com/resin-io/etcher/blob/master/docs/CONTRIBUTING.md
 [CLI]: https://github.com/resin-io/etcher/blob/master/docs/CLI.md

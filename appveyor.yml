@@ -1,14 +1,12 @@
 # appveyor file
 # http://www.appveyor.com/docs/appveyor-yml
 
-init:
-  - git config --global core.autocrlf input
-
 image: Visual Studio 2015
 
 cache:
   - C:\Users\appveyor\.node-gyp
   - '%AppData%\npm-cache'
+  - node_modules
   - C:\ProgramData\chocolatey\bin -> appveyor.yml
   - C:\ProgramData\chocolatey\lib -> appveyor.yml
   - C:\Users\appveyor\AppData\Local\Temp\chocolatey -> appveyor.yml
@@ -17,32 +15,32 @@ cache:
 environment:
   global:
     ELECTRON_NO_ATTACH_CONSOLE: true
-    nodejs_version: 6.1.0
+    nodejs_version: "6.10.3"
   matrix:
     - TARGET_ARCH: x64
     - TARGET_ARCH: x86
 
+matrix:
+  fast_finish: true
+
 install:
-  - ps: Install-Product node $env:nodejs_version x64
-  - npm install -g bower rimraf asar
-  - choco install nsis -version 2.51
-  - choco install upx
-  - choco install jq
+  - ps: Update-NodeJsInstallation $env:nodejs_version $env:TARGET_ARCH
   - set PATH=C:\Program Files (x86)\Windows Kits\8.1\bin\x86;%PATH%
   - set PATH=C:\Program Files (x86)\NSIS;%PATH%
-  - set PATH=C:\Ruby22\bin;%PATH%
   - set PATH=C:\MinGW\bin;%PATH%
   - set PATH=C:\MinGW\msys\1.0\bin;%PATH%
-  - gem install scss_lint
-  - make info
-  - make electron-develop
+  - bash .\scripts\ci\install.sh -o win32 -r %TARGET_ARCH%
 
 build: off
 
 test_script:
   - node --version
   - npm --version
-  - cmd: npm test
+  - bash .\scripts\ci\test.sh -o win32 -r %TARGET_ARCH%
+  - bash .\scripts\ci\build-installers.sh -o win32 -r %TARGET_ARCH%
+
+deploy_script:
+  - bash .\scripts\ci\deploy-aws-s3.sh -o win32 -r %TARGET_ARCH%
 
 notifications:
 

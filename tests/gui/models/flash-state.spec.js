@@ -1,50 +1,55 @@
 'use strict';
 
 const m = require('mochainon');
-const angular = require('angular');
-require('angular-mocks');
+const flashState = require('../../../lib/gui/models/flash-state');
 
-describe('Browser: FlashStateModel', function() {
+describe('Browser: flashState', function() {
 
-  beforeEach(angular.mock.module(
-    require('../../../lib/gui/models/flash-state')
-  ));
+  beforeEach(function() {
+    flashState.resetState();
+  });
 
-  describe('FlashStateModel', function() {
-
-    let FlashStateModel;
-
-    beforeEach(angular.mock.inject(function(_FlashStateModel_) {
-      FlashStateModel = _FlashStateModel_;
-    }));
+  describe('flashState', function() {
 
     describe('.resetState()', function() {
 
       it('should be able to reset the progress state', function() {
-        FlashStateModel.setFlashingFlag();
-        FlashStateModel.setProgressState({
+        flashState.setFlashingFlag();
+        flashState.setProgressState({
           type: 'write',
           percentage: 50,
           eta: 15,
           speed: 100000000000
         });
 
-        FlashStateModel.resetState();
+        flashState.resetState();
 
-        m.chai.expect(FlashStateModel.getFlashState()).to.deep.equal({
+        m.chai.expect(flashState.getFlashState()).to.deep.equal({
           percentage: 0,
           speed: 0
         });
       });
 
       it('should be able to reset the progress state', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           cancelled: false,
           sourceChecksum: '1234'
         });
 
-        FlashStateModel.resetState();
-        m.chai.expect(FlashStateModel.getFlashResults()).to.deep.equal({});
+        flashState.resetState();
+        m.chai.expect(flashState.getFlashResults()).to.deep.equal({});
+      });
+
+      it('should unset the flashing flag', function() {
+        flashState.setFlashingFlag();
+        flashState.resetState();
+        m.chai.expect(flashState.isFlashing()).to.be.false;
+      });
+
+      it('should unset the flash uuid', function() {
+        flashState.setFlashingFlag();
+        flashState.resetState();
+        m.chai.expect(flashState.getFlashUuid()).to.be.undefined;
       });
 
     });
@@ -52,12 +57,12 @@ describe('Browser: FlashStateModel', function() {
     describe('.isFlashing()', function() {
 
       it('should return false by default', function() {
-        m.chai.expect(FlashStateModel.isFlashing()).to.be.false;
+        m.chai.expect(flashState.isFlashing()).to.be.false;
       });
 
       it('should return true if flashing', function() {
-        FlashStateModel.setFlashingFlag();
-        m.chai.expect(FlashStateModel.isFlashing()).to.be.true;
+        flashState.setFlashingFlag();
+        m.chai.expect(flashState.isFlashing()).to.be.true;
       });
 
     });
@@ -65,13 +70,13 @@ describe('Browser: FlashStateModel', function() {
     describe('.setProgressState()', function() {
 
       it('should not allow setting the state if flashing is false', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           cancelled: false,
           sourceChecksum: '1234'
         });
 
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             type: 'write',
             percentage: 50,
             eta: 15,
@@ -81,9 +86,9 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should throw if type is missing', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             percentage: 50,
             eta: 15,
             speed: 100000000000
@@ -92,9 +97,9 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should throw if type is not a string', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             type: 1234,
             percentage: 50,
             eta: 15,
@@ -104,9 +109,9 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should not throw if percentage is 0', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             type: 'write',
             percentage: 0,
             eta: 15,
@@ -116,9 +121,9 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should throw if percentage is missing', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             type: 'write',
             eta: 15,
             speed: 100000000000
@@ -127,9 +132,9 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should throw if percentage is not a number', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             type: 'write',
             percentage: '50',
             eta: 15,
@@ -138,10 +143,34 @@ describe('Browser: FlashStateModel', function() {
         }).to.throw('Invalid state percentage: 50');
       });
 
-      it('should throw if eta is missing', function() {
-        FlashStateModel.setFlashingFlag();
+      it('should throw if percentage is outside maximum bound', function() {
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
+            type: 'write',
+            percentage: 101,
+            eta: 15,
+            speed: 0
+          });
+        }).to.throw('Invalid state percentage: 101');
+      });
+
+      it('should throw if percentage is outside minimum bound', function() {
+        flashState.setFlashingFlag();
+        m.chai.expect(function() {
+          flashState.setProgressState({
+            type: 'write',
+            percentage: -1,
+            eta: 15,
+            speed: 0
+          });
+        }).to.throw('Invalid state percentage: -1');
+      });
+
+      it('should throw if eta is missing', function() {
+        flashState.setFlashingFlag();
+        m.chai.expect(function() {
+          flashState.setProgressState({
             type: 'write',
             percentage: 50,
             speed: 100000000000
@@ -150,9 +179,9 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should not throw if eta is equal to zero', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             type: 'write',
             percentage: 50,
             eta: 0,
@@ -162,9 +191,9 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should throw if eta is not a number', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             type: 'write',
             percentage: 50,
             eta: '15',
@@ -174,9 +203,9 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should throw if speed is missing', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             type: 'write',
             percentage: 50,
             eta: 15
@@ -185,9 +214,9 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should not throw if speed is 0', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
         m.chai.expect(function() {
-          FlashStateModel.setProgressState({
+          flashState.setProgressState({
             type: 'write',
             percentage: 50,
             eta: 15,
@@ -201,15 +230,15 @@ describe('Browser: FlashStateModel', function() {
     describe('.getFlashResults()', function() {
 
       it('should get the flash results', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
 
         const expectedResults = {
           cancelled: false,
           sourceChecksum: '1234'
         };
 
-        FlashStateModel.unsetFlashingFlag(expectedResults);
-        const results = FlashStateModel.getFlashResults();
+        flashState.unsetFlashingFlag(expectedResults);
+        const results = flashState.getFlashResults();
         m.chai.expect(results).to.deep.equal(expectedResults);
       });
 
@@ -218,9 +247,9 @@ describe('Browser: FlashStateModel', function() {
     describe('.getFlashState()', function() {
 
       it('should initially return an empty state', function() {
-        FlashStateModel.resetState();
-        const flashState = FlashStateModel.getFlashState();
-        m.chai.expect(flashState).to.deep.equal({
+        flashState.resetState();
+        const currentFlashState = flashState.getFlashState();
+        m.chai.expect(currentFlashState).to.deep.equal({
           percentage: 0,
           speed: 0
         });
@@ -234,10 +263,10 @@ describe('Browser: FlashStateModel', function() {
           speed: 0
         };
 
-        FlashStateModel.setFlashingFlag();
-        FlashStateModel.setProgressState(state);
-        const flashState = FlashStateModel.getFlashState();
-        m.chai.expect(flashState).to.deep.equal(state);
+        flashState.setFlashingFlag();
+        flashState.setProgressState(state);
+        const currentFlashState = flashState.getFlashState();
+        m.chai.expect(currentFlashState).to.deep.equal(state);
       });
 
     });
@@ -246,33 +275,33 @@ describe('Browser: FlashStateModel', function() {
 
       it('should throw if no flashing results', function() {
         m.chai.expect(function() {
-          FlashStateModel.unsetFlashingFlag();
+          flashState.unsetFlashingFlag();
         }).to.throw('Missing results');
       });
 
       it('should be able to set a string error code', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           cancelled: false,
           sourceChecksum: '1234',
           errorCode: 'EBUSY'
         });
 
-        m.chai.expect(FlashStateModel.getLastFlashErrorCode()).to.equal('EBUSY');
+        m.chai.expect(flashState.getLastFlashErrorCode()).to.equal('EBUSY');
       });
 
       it('should be able to set a number error code', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           cancelled: false,
           sourceChecksum: '1234',
           errorCode: 123
         });
 
-        m.chai.expect(FlashStateModel.getLastFlashErrorCode()).to.equal(123);
+        m.chai.expect(flashState.getLastFlashErrorCode()).to.equal(123);
       });
 
       it('should throw if errorCode is not a number not a string', function() {
         m.chai.expect(function() {
-          FlashStateModel.unsetFlashingFlag({
+          flashState.unsetFlashingFlag({
             cancelled: false,
             sourceChecksum: '1234',
             errorCode: {
@@ -283,11 +312,11 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should default cancelled to false', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           sourceChecksum: '1234'
         });
 
-        const flashResults = FlashStateModel.getFlashResults();
+        const flashResults = flashState.getFlashResults();
 
         m.chai.expect(flashResults).to.deep.equal({
           cancelled: false,
@@ -297,7 +326,7 @@ describe('Browser: FlashStateModel', function() {
 
       it('should throw if cancelled is not boolean', function() {
         m.chai.expect(function() {
-          FlashStateModel.unsetFlashingFlag({
+          flashState.unsetFlashingFlag({
             cancelled: 'false',
             sourceChecksum: '1234'
           });
@@ -306,7 +335,7 @@ describe('Browser: FlashStateModel', function() {
 
       it('should throw if cancelled is true and sourceChecksum exists', function() {
         m.chai.expect(function() {
-          FlashStateModel.unsetFlashingFlag({
+          flashState.unsetFlashingFlag({
             cancelled: true,
             sourceChecksum: '1234'
           });
@@ -314,38 +343,51 @@ describe('Browser: FlashStateModel', function() {
       });
 
       it('should be able to set flashing to false', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           cancelled: false,
           sourceChecksum: '1234'
         });
 
-        m.chai.expect(FlashStateModel.isFlashing()).to.be.false;
+        m.chai.expect(flashState.isFlashing()).to.be.false;
       });
 
       it('should reset the flashing state', function() {
-        FlashStateModel.setFlashingFlag();
+        flashState.setFlashingFlag();
 
-        FlashStateModel.setProgressState({
+        flashState.setProgressState({
           type: 'write',
           percentage: 50,
           eta: 15,
           speed: 100000000000
         });
 
-        m.chai.expect(FlashStateModel.getFlashState()).to.not.deep.equal({
+        m.chai.expect(flashState.getFlashState()).to.not.deep.equal({
           percentage: 0,
           speed: 0
         });
 
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           cancelled: false,
           sourceChecksum: '1234'
         });
 
-        m.chai.expect(FlashStateModel.getFlashState()).to.deep.equal({
+        m.chai.expect(flashState.getFlashState()).to.deep.equal({
           percentage: 0,
           speed: 0
         });
+      });
+
+      it('should not reset the flash uuid', function() {
+        flashState.setFlashingFlag();
+        const uuidBeforeUnset = flashState.getFlashUuid();
+
+        flashState.unsetFlashingFlag({
+          sourceChecksum: '1234',
+          cancelled: false
+        });
+
+        const uuidAfterUnset = flashState.getFlashUuid();
+        m.chai.expect(uuidBeforeUnset).to.equal(uuidAfterUnset);
       });
 
     });
@@ -353,8 +395,8 @@ describe('Browser: FlashStateModel', function() {
     describe('.setFlashingFlag()', function() {
 
       it('should be able to set flashing to true', function() {
-        FlashStateModel.setFlashingFlag();
-        m.chai.expect(FlashStateModel.isFlashing()).to.be.true;
+        flashState.setFlashingFlag();
+        m.chai.expect(flashState.isFlashing()).to.be.true;
       });
 
       it('should reset the flash results', function() {
@@ -363,11 +405,11 @@ describe('Browser: FlashStateModel', function() {
           sourceChecksum: '1234'
         };
 
-        FlashStateModel.unsetFlashingFlag(expectedResults);
-        const results = FlashStateModel.getFlashResults();
+        flashState.unsetFlashingFlag(expectedResults);
+        const results = flashState.getFlashResults();
         m.chai.expect(results).to.deep.equal(expectedResults);
-        FlashStateModel.setFlashingFlag();
-        m.chai.expect(FlashStateModel.getFlashResults()).to.deep.equal({});
+        flashState.setFlashingFlag();
+        m.chai.expect(flashState.getFlashResults()).to.deep.equal({});
       });
 
     });
@@ -375,25 +417,25 @@ describe('Browser: FlashStateModel', function() {
     describe('.wasLastFlashCancelled()', function() {
 
       it('should return false given a pristine state', function() {
-        FlashStateModel.resetState();
-        m.chai.expect(FlashStateModel.wasLastFlashCancelled()).to.be.false;
+        flashState.resetState();
+        m.chai.expect(flashState.wasLastFlashCancelled()).to.be.false;
       });
 
       it('should return false if !cancelled', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           sourceChecksum: '1234',
           cancelled: false
         });
 
-        m.chai.expect(FlashStateModel.wasLastFlashCancelled()).to.be.false;
+        m.chai.expect(flashState.wasLastFlashCancelled()).to.be.false;
       });
 
       it('should return true if cancelled', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           cancelled: true
         });
 
-        m.chai.expect(FlashStateModel.wasLastFlashCancelled()).to.be.true;
+        m.chai.expect(flashState.wasLastFlashCancelled()).to.be.true;
       });
 
     });
@@ -401,25 +443,25 @@ describe('Browser: FlashStateModel', function() {
     describe('.getLastFlashSourceChecksum()', function() {
 
       it('should return undefined given a pristine state', function() {
-        FlashStateModel.resetState();
-        m.chai.expect(FlashStateModel.getLastFlashSourceChecksum()).to.be.undefined;
+        flashState.resetState();
+        m.chai.expect(flashState.getLastFlashSourceChecksum()).to.be.undefined;
       });
 
       it('should return the last flash source checksum', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           sourceChecksum: '1234',
           cancelled: false
         });
 
-        m.chai.expect(FlashStateModel.getLastFlashSourceChecksum()).to.equal('1234');
+        m.chai.expect(flashState.getLastFlashSourceChecksum()).to.equal('1234');
       });
 
       it('should return undefined if the last flash was cancelled', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           cancelled: true
         });
 
-        m.chai.expect(FlashStateModel.getLastFlashSourceChecksum()).to.be.undefined;
+        m.chai.expect(flashState.getLastFlashSourceChecksum()).to.be.undefined;
       });
 
     });
@@ -427,27 +469,73 @@ describe('Browser: FlashStateModel', function() {
     describe('.getLastFlashErrorCode()', function() {
 
       it('should return undefined given a pristine state', function() {
-        FlashStateModel.resetState();
-        m.chai.expect(FlashStateModel.getLastFlashErrorCode()).to.be.undefined;
+        flashState.resetState();
+        m.chai.expect(flashState.getLastFlashErrorCode()).to.be.undefined;
       });
 
       it('should return the last flash error code', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           sourceChecksum: '1234',
           cancelled: false,
           errorCode: 'ENOSPC'
         });
 
-        m.chai.expect(FlashStateModel.getLastFlashErrorCode()).to.equal('ENOSPC');
+        m.chai.expect(flashState.getLastFlashErrorCode()).to.equal('ENOSPC');
       });
 
       it('should return undefined if the last flash did not report an error code', function() {
-        FlashStateModel.unsetFlashingFlag({
+        flashState.unsetFlashingFlag({
           sourceChecksum: '1234',
           cancelled: false
         });
 
-        m.chai.expect(FlashStateModel.getLastFlashErrorCode()).to.be.undefined;
+        m.chai.expect(flashState.getLastFlashErrorCode()).to.be.undefined;
+      });
+
+    });
+
+    describe('.getFlashUuid()', function() {
+
+      const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+      it('should be initially undefined', function() {
+        m.chai.expect(flashState.getFlashUuid()).to.be.undefined;
+      });
+
+      it('should be a valid uuid if the flashing flag is set', function() {
+        flashState.setFlashingFlag();
+        const uuid = flashState.getFlashUuid();
+        m.chai.expect(UUID_REGEX.test(uuid)).to.be.true;
+      });
+
+      it('should return different uuids every time the flashing flag is set', function() {
+        flashState.setFlashingFlag();
+        const uuid1 = flashState.getFlashUuid();
+        flashState.unsetFlashingFlag({
+          sourceChecksum: '1234',
+          cancelled: false
+        });
+
+        flashState.setFlashingFlag();
+        const uuid2 = flashState.getFlashUuid();
+        flashState.unsetFlashingFlag({
+          cancelled: true
+        });
+
+        flashState.setFlashingFlag();
+        const uuid3 = flashState.getFlashUuid();
+        flashState.unsetFlashingFlag({
+          sourceChecksum: '1234',
+          cancelled: false
+        });
+
+        m.chai.expect(UUID_REGEX.test(uuid1)).to.be.true;
+        m.chai.expect(UUID_REGEX.test(uuid2)).to.be.true;
+        m.chai.expect(UUID_REGEX.test(uuid3)).to.be.true;
+
+        m.chai.expect(uuid1).to.not.equal(uuid2);
+        m.chai.expect(uuid2).to.not.equal(uuid3);
+        m.chai.expect(uuid3).to.not.equal(uuid1);
       });
 
     });

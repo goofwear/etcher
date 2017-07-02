@@ -1,15 +1,13 @@
 <div class="modal-header">
   <h4 class="modal-title">
     <span class="glyphicon glyphicon-exclamation-sign"></span>
-    <span>Warning!</span>
+    <span>Attention</span>
   </h4>
   <button class="close" ng-click="modal.reject()">&times;</button>
 </div>
 
 <div class="modal-body">
-  <div class="modal-text">
-    <p>{{ ::modal.options.description }}</p>
-  </div>
+  <p ng-bind-html="modal.options.description"></p>
 </div>
 
 <div class="modal-footer">

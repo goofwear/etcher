@@ -4451,7 +4451,7 @@ a.badge:hover, a.badge:focus {
     height: auto;
     margin-left: auto;
     margin-right: auto; }
-  .thumbnail .caption, .thumbnail .page-main .icon-caption, .page-main .thumbnail .icon-caption {
+  .thumbnail .caption {
     padding: 9px;
     color: #333333; }
 
@@ -6008,9 +6008,6 @@ body {
 .space-top-large {
   margin-top: 30px; }
 
-.space-top-medium {
-  margin-top: 15px; }
-
 .space-vertical-large {
   margin-top: 30px;
   margin-bottom: 30px; }
@@ -6093,7 +6090,7 @@ body {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.caption, .page-main .icon-caption {
+.caption {
   font-weight: bold;
   font-size: 11px;
   margin-bottom: 0; }
@@ -6227,8 +6224,7 @@ body {
 .modal-header {
   display: flex;
   align-items: baseline;
-  text-transform: uppercase;
-  font-size: 11px;
+  font-size: 12px;
   color: #b3b3b3;
   padding: 11px 20px;
   flex-grow: 0; }
@@ -6240,41 +6236,14 @@ body {
 .modal-body {
   flex-grow: 1;
   color: #666;
-  padding: 0;
+  padding: 20px;
   max-height: 250px;
   overflow: auto; }
   .modal-body a {
     color: #5793db; }
-  .modal-body .list-group {
-    padding: 0 20px; }
-  .modal-body .list-group-item {
-    display: flex;
-    align-items: center;
-    border-left: 0;
-    border-right: 0;
-    border-radius: 0;
-    border-color: #ededed;
-    padding: 12px 0; }
-    .modal-body .list-group-item > .tick {
-      font-size: 11px; }
-    .modal-body .list-group-item :first-child {
-      flex-grow: 1; }
-    .modal-body .list-group-item:first-child {
-      border-top: 0; }
-    .modal-body .list-group-item[disabled] .list-group-item-heading {
-      color: #b3b3b3; }
-  .modal-body .list-group-item-heading {
-    font-size: 13px; }
-  .modal-body .list-group-item-text {
-    line-height: 1;
-    font-size: 11px;
-    color: #b3b3b3; }
-
-.modal-text {
-  padding: 20px; }
-  .modal-text > p {
+  .modal-body > p {
     white-space: pre-line; }
-  .modal-text > p:last-child {
+  .modal-body > p:last-child {
     margin-bottom: 0; }
 
 .modal-menu {
@@ -6320,26 +6289,6 @@ body {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.modal-update-notifier .modal-footer .checkbox {
-  color: #b3b3b3;
-  font-size: 11px;
-  margin-bottom: 0; }
-
-/*
- * Copyright 2016 resin.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 /**
  * A button with a progress bar inside.
  *
@@ -6366,11 +6315,16 @@ body {
  *   <span class="progress-button__bar" style="width: 50%;"></span>
  * </button>
  */
+.progress-button[active="true"] {
+  background-color: #ff912f; }
+
 .progress-button .progress-button__bar {
-  background-color: #6ca1e0; }
+  background-color: #ff9e49; }
 
 .progress-button.progress-button--striped {
-  background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(0.25, #3b679b), color-stop(0.26, #5c93d6), color-stop(0.5, #5c93d6), color-stop(0.51, #3b679b), color-stop(0.75, #3b679b), color-stop(0.76, #5c93d6), to(#5c93d6)); }
+  background-image: -webkit-gradient(linear, 0 0, 100% 100%, color-stop(0.25, #bd6415), color-stop(0.26, #fa9134), color-stop(0.5, #fa9134), color-stop(0.51, #bd6415), color-stop(0.75, #bd6415), color-stop(0.76, #fa9134), to(#fa9134)); }
+  .progress-button.progress-button--striped .progress-button__bar {
+    background-color: #ff9e49; }
 
 .progress-button__content {
   position: relative;
@@ -6414,15 +6368,57 @@ body {
   width: 300px;
   height: 320px; }
 
+.modal-drive-selector-modal .modal-body {
+  padding-top: 0;
+  padding-bottom: 0; }
+
 .modal-drive-selector-modal .list-group-item[disabled] {
   cursor: not-allowed; }
 
-.component-drive-selector-body .list-group-item-footer {
+.modal-drive-selector-modal .list-group-item-footer {
   margin-top: 8px; }
 
-.component-drive-selector-body .list-group-item-heading,
-.component-drive-selector-body .list-group-item-text {
+.modal-drive-selector-modal .list-group-item-heading,
+.modal-drive-selector-modal .list-group-item-text {
   word-break: break-all; }
+
+.modal-drive-selector-modal .list-group {
+  margin-bottom: 0; }
+
+.modal-drive-selector-modal .list-group-item {
+  display: flex;
+  align-items: center;
+  border-left: 0;
+  border-right: 0;
+  border-radius: 0;
+  border-color: #ededed;
+  padding: 12px 0; }
+  .modal-drive-selector-modal .list-group-item > .tick {
+    font-size: 11px; }
+  .modal-drive-selector-modal .list-group-item :first-child {
+    flex-grow: 1; }
+  .modal-drive-selector-modal .list-group-item:first-child {
+    border-top: 0; }
+  .modal-drive-selector-modal .list-group-item[disabled] .list-group-item-heading {
+    color: #b3b3b3; }
+
+.modal-drive-selector-modal .list-group-item-heading {
+  font-size: 13px; }
+
+.modal-drive-selector-modal .list-group-item-text {
+  line-height: 1;
+  font-size: 11px;
+  color: #b3b3b3; }
+
+.modal-drive-selector-modal .word-keep {
+  word-break: keep-all; }
+
+svg {
+  width: 100%;
+  height: 100%; }
+
+svg-icon {
+  display: inline-block; }
 
 /*
  * Copyright 2016 resin.io
@@ -6461,33 +6457,12 @@ body {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.modal-flash-error-modal .modal-title .glyphicon, .modal-flash-error-modal .modal-title .tick {
-  color: #d9534f; }
-
-/*
- * Copyright 2016 resin.io
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 .modal-warning-modal .modal-content {
   width: 350px; }
 
 .modal-warning-modal .modal-title .glyphicon, .modal-warning-modal .modal-title .tick {
   color: #d9534f; }
 
-.modal-warning-modal .button, .modal-warning-modal .progress-button {
-  text-transform: uppercase; }
-
 /*
  * Copyright 2016 resin.io
  *
@@ -6503,29 +6478,16 @@ body {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.page-main .icon-caption {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 10px;
-  color: #fff; }
-  .page-main .icon-caption[disabled] {
-    color: #787c7f; }
+.page-main {
+  margin-top: 75px; }
 
-.page-main .badge {
-  background-color: #535760;
-  color: #fff; }
-  .page-main .badge[disabled] {
-    background-color: #5a5d60;
-    color: #787c7f; }
-
-.svg-icon[disabled] path {
+svg-icon > div[disabled] path {
   fill: #787c7f; }
 
 .page-main .step-selection-text {
   color: #fff; }
 
-.page-main .text-disabled {
+.page-main .text-disabled > span {
   color: #787c7f; }
 
 .page-main .relative {
@@ -6538,16 +6500,16 @@ body {
   height: 2px;
   background-color: #fff;
   position: absolute;
-  width: 230px;
-  top: 95px; }
+  width: 124px;
+  top: 19px; }
   .page-main [disabled].step-border-left, .page-main [disabled].step-border-right {
     background-color: #787c7f; }
 
 .page-main .step-border-left {
-  left: -120px; }
+  left: -67px; }
 
 .page-main .step-border-right {
-  right: -120px; }
+  right: -67px; }
 
 .page-main .step-tooltip {
   display: block;
@@ -6574,12 +6536,19 @@ body {
 
 .page-main .button.step-footer, .page-main .step-footer.progress-button {
   font-size: 12px;
-  border-bottom: 1px dashed;
+  color: #5793db;
   border-radius: 0;
   padding: 0; }
 
 .page-main .glyphicon, .page-main .tick {
   vertical-align: text-top; }
+
+.page-main .step-name {
+  font-weight: bold;
+  color: #fff; }
+
+.page-main .step-size {
+  color: #787c7f; }
 
 /*
  * Copyright 2016 resin.io
@@ -6605,11 +6574,6 @@ body {
 .page-settings .title {
   color: #fff; }
 
-.page-settings .subtitle {
-  color: #fff;
-  margin-top: 30px;
-  margin-bottom: 15px; }
-
 /*
  * Copyright 2016 resin.io
  *
@@ -6625,6 +6589,9 @@ body {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+.page-finish {
+  margin-top: -25px; }
+
 .page-finish .button-label {
   margin: 0 auto 15px;
   max-width: 165px; }
@@ -6633,7 +6600,11 @@ body {
   min-width: 170px; }
 
 .page-finish .title {
-  color: #fff; }
+  color: #fff;
+  font-weight: bold; }
+
+.page-finish .huge-title {
+  font-size: 3.5em; }
 
 .page-finish .label {
   display: inline-block; }
@@ -6649,6 +6620,55 @@ body {
   background-color: #64686a;
   padding: 0px;
   min-width: 2px; }
+
+.page-finish .center {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
+.page-finish .box > div {
+  margin-bottom: 20px; }
+  .page-finish .box > div > button {
+    margin-right: 20px; }
+
+.page-finish webview {
+  width: 800px;
+  height: 300px;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  z-index: 9001; }
+
+.page-finish .fallback-banner {
+  padding-top: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 300px;
+  position: absolute;
+  top: 125px;
+  left: 0;
+  background-color: #535760;
+  color: #fff;
+  font-weight: 300; }
+  .page-finish .fallback-banner .caption {
+    display: flex;
+    font-weight: normal; }
+  .page-finish .fallback-banner .caption-big {
+    font-size: 30px; }
+  .page-finish .fallback-banner .caption-small {
+    font-size: 20px;
+    padding: 15px; }
+  .page-finish .fallback-banner .footer-right {
+    padding: 0;
+    border-bottom: 1px dashed; }
+  .page-finish .fallback-banner .svg-icon {
+    margin-left: 0.3em;
+    margin-right: 0.3em; }
+  .page-finish .fallback-banner .section-footer {
+    border-top: none;
+    height: 39px; }
 
 body {
   letter-spacing: 1px; }
@@ -6670,16 +6690,31 @@ body {
     padding: 0; }
   .section-footer .svg-icon {
     margin: 0 13px; }
-  .section-footer .caption[os-open-external], .section-footer .page-main [os-open-external].icon-caption, .page-main .section-footer [os-open-external].icon-caption {
+  .section-footer .caption[os-open-external] {
     border-bottom: 1px dashed;
     padding-bottom: 2px; }
-    .section-footer .caption[os-open-external]:hover, .section-footer .page-main [os-open-external].icon-caption:hover, .page-main .section-footer [os-open-external].icon-caption:hover {
+    .section-footer .caption[os-open-external]:hover {
       color: #85898c; }
   .section-footer .footer-right {
     font-size: 10px;
     position: absolute;
     right: 0;
     top: 50%; }
+  .section-footer > span[os-open-external] {
+    display: flex; }
+
+.section-loader webview {
+  flex: 0 1;
+  height: 0;
+  width: 0; }
+
+.section-loader.isFinish webview {
+  flex: initial;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 255px; }
 
 .wrapper {
   height: 100%;
@@ -6692,4 +6727,3 @@ body {
   .section-header > .button, .section-header > .progress-button {
     padding-left: 3px;
     padding-right: 3px; }
-

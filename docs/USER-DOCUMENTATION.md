@@ -130,24 +130,20 @@ run Etcher on a GNU/Linux system.
 
 - liblzma (for xz decompression)
 
-Disable update notifications
-----------------------------
+Simulate an update alert
+------------------------
 
-You can disable update notifications, which can be useful when running Etcher
-outside a common desktop environment (like in a [resin.io] application), by
-setting the `ETCHER_DISABLE_UPDATES` environment variable.
+You can set the `ETCHER_FAKE_S3_LATEST_VERSION` environment variable to a valid
+semver version (greater than the current version) to trick the application into
+thinking that what you put there is the latest available version, therefore
+causing the update notification dialog to be presented at startup.
 
-In GNU/Linux and Mac OS X:
+Note that the value of the variable will be ignored if it doesn't match the
+release type of the current application version. For example, setting the
+variable to a production version (e.g. `ETCHER_FAKE_S3_LATEST_VERSION=2.0.0`)
+will be ignored if you're running a snapshot build, and vice-versa.
 
-```sh
-export ETCHER_DISABLE_UPDATES=1
-```
-
-In Windows:
-
-```sh
-set ETCHER_DISABLE_UPDATES=1
-```
+See [`PUBLISHING.md`][publishing] for more details about release types.
 
 Recovering broken drives
 ------------------------
@@ -223,6 +219,7 @@ platforms.
 [electron]: http://electron.atom.io
 [electron-supported-platforms]: https://github.com/electron/electron/blob/master/docs/tutorial/supported-platforms.md
 [etcher-cli]: https://github.com/resin-io/etcher/blob/master/docs/CLI.md
+[publishing]: https://github.com/resin-io/etcher/blob/master/docs/PUBLISHING.md
 [windows-usb-tool]: https://www.microsoft.com/en-us/download/windows-usb-dvd-download-tool
 [rufus]: https://rufus.akeo.ie
 [unetbootin]: https://unetbootin.github.io

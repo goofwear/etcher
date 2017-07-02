@@ -10,33 +10,39 @@ Prerequisites
 ### Common
 
 - [NodeJS](https://nodejs.org) (at least v6)
-- [Bower](http://bower.io)
-- [UPX](http://upx.sourceforge.net)
 - [Python](https://www.python.org)
-- [SCSS Lint](https://github.com/brigade/scss-lint/)
 - [jq](https://stedolan.github.io/jq/)
-- [Asar](https://github.com/electron/asar)
+- [curl](https://curl.haxx.se/)
+
+```sh
+pip install -r requirements.txt
+```
+
+You might need to run this with `sudo` or administrator permissions.
 
 ### Windows
 
-- [Rimraf](https://github.com/isaacs/rimraf)
 - [NSIS v2.51](http://nsis.sourceforge.net/Main_Page) (v3.x won't work)
-- [Visual Studio Community 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48146) (free) (other editions, like Professional and Enterprise, should work too)
-- [7z](http://www.7-zip.org) (command line version)
+- Either one of the following:
+  - [Visual C++ 2015 Build Tools](http://landinghub.visualstudio.com/visual-cpp-build-tools) containing standalone compilers, libraries and scripts
+  - Install the [windows-build-tools](https://github.com/felixrieseberg/windows-build-tools) via npm with `npm install --global windows-build-tools`
+  - [Visual Studio Community 2015](https://www.microsoft.com/en-us/download/details.aspx?id=48146) (free) (other editions, like Professional and Enterprise, should work too)
+    **NOTE:** Visual Studio 2015 doesn't install C++ by default. You have to rerun the
+    setup, select "Modify" and then check `Visual C++ -> Common Tools for Visual
+    C++ 2015` (see http://stackoverflow.com/a/31955339)
 - [MinGW](http://www.mingw.org)
 
 The following MinGW packages are required:
 
 - `msys-make`
 - `msys-unzip`
-- `msys-wget`
+- `msys-zip`
 - `msys-bash`
 - `msys-coreutils`
 
 ### OS X
 
 - [XCode](https://developer.apple.com/xcode/)
-- [afsctool](https://brkirch.wordpress.com/afsctool/)
 
 Cloning the project
 -------------------
@@ -57,25 +63,12 @@ than simply running `npm install` given that we need to do extra configuration
 to make sure native dependencies are correctly compiled for Electron, otherwise
 the application might not run successfully.
 
-### OS X
+If you're on Windows, **run the command from the _Developer Command Prompt for
+VS2015_**, to ensure all Visual Studio command utilities are available in the
+`%PATH%`.
 
 ```sh
 make electron-develop
-```
-
-### GNU/Linux
-
-```sh
-make electron-develop
-```
-
-### Windows
-
-**Run the following command from the _Developer Command Prompt for VS2015_**,
-to ensure all Visual Studio command utilities are available in the `%PATH%`:
-
-```sh
-.\scripts\build\windows.bat install <x64|x86>
 ```
 
 Running the application

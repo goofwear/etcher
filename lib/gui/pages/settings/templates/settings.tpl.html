@@ -5,9 +5,9 @@
     <label>
       <input type="checkbox"
         ng-model="settings.currentData.errorReporting"
-        ng-change="settings.model.set('errorReporting', settings.currentData.errorReporting)">
+        ng-change="settings.toggle('errorReporting')">
 
-      <span>Report errors</span>
+      <span>Anonymously report errors and usage statistics to resin.io</span>
     </label>
   </div>
 
@@ -15,7 +15,7 @@
     <label>
       <input type="checkbox"
         ng-model="settings.currentData.unmountOnSuccess"
-        ng-change="settings.model.set('unmountOnSuccess', settings.currentData.unmountOnSuccess)">
+        ng-change="settings.toggle('unmountOnSuccess')">
 
       <!-- On Windows, "Unmounting" basically means "ejecting". -->
       <!-- On top of that, Windows users are usually not even -->
@@ -34,23 +34,31 @@
     <label>
       <input type="checkbox"
         ng-model="settings.currentData.validateWriteOnSuccess"
-        ng-change="settings.model.set('validateWriteOnSuccess', settings.currentData.validateWriteOnSuccess)">
+        ng-change="settings.toggle('validateWriteOnSuccess')">
 
       <span>Validate write on success</span>
     </label>
   </div>
 
-  <h3 class="subtitle">Advanced</h3>
+  <div class="checkbox" ng-show="settings.model.get('updatesEnabled')">
+    <label>
+      <input type="checkbox"
+        ng-model="settings.currentData.includeUnstableUpdateChannel"
+        ng-change="settings.toggle('includeUnstableUpdateChannel')">
+
+      <span>Include unstable update channel</span>
+    </label>
+  </div>
 
   <div class="checkbox">
     <label>
       <input type="checkbox"
         ng-model="settings.currentData.unsafeMode"
-        ng-change="settings.enableDangerousSetting('unsafeMode', {
+        ng-change="settings.toggle('unsafeMode', {
           description: 'Are you sure you want to turn this on? You will be able to overwrite your system drives if you\'re not careful.',
           confirmationLabel: 'Enable unsafe mode'
         })">
-      <span>Unsafe mode <span class="label label-danger">DANGEROUS</span></span>
+      <span>Unsafe mode <span class="label label-danger">Dangerous</span></span>
     </label>
   </div>
 </div>

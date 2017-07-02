@@ -1,18 +1,33 @@
-language: cpp
+language: node_js
 sudo: false
+node_js:
+  - "6.10.3"
+
+cache:
+  ccache: true
 
 services:
   - docker
 
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - libstdc++-6-dev
+
 env:
   global:
-    - NODE_VERSION="6.1.0"
-    - RUBY_VERSION="2.3.1"
+    - CCACHE_TEMPDIR=/tmp/.ccache-temp
+    - CCACHE_COMPRESS=1
+    - CC="clang"
+    - CXX="clang++"
   matrix:
     - TARGET_ARCH=x64
     - TARGET_ARCH=x86
 
 matrix:
+  fast_finish: true
   exclude:
     - os: osx
       env: TARGET_ARCH=x86
@@ -22,42 +37,26 @@ os:
   - osx
 
 before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then PATH=/usr/local/opt/ccache/libexec:$PATH; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      rm -rf ~/.nvm;
-      git clone https://github.com/creationix/nvm.git ~/.nvm;
-      source ~/.nvm/nvm.sh;
-      nvm --version;
-      nvm install $NODE_VERSION;
-      node --version;
-      npm --version;
-      npm config set spin=false;
-      rvm install $RUBY_VERSION;
-      rvm use $RUBY_VERSION;
+      export HOST_OS="darwin";
+    else
+      export HOST_OS="$TRAVIS_OS_NAME";
     fi
 
 install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      gem install scss_lint;
-      npm install -g bower electron-installer-debian;
-      npm install -g electron-installer-debian;
-      brew install afsctool;
-      brew install jq;
-    fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      make info;
-      make electron-develop;
-    fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      ./scripts/build/docker/run-command.sh -r ${TARGET_ARCH} -s ${PWD} -c "make info && make electron-develop";
-    fi
+  - travis_wait ./scripts/ci/install.sh -o $HOST_OS -r $TARGET_ARCH
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      npm test;
-    fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      ./scripts/build/docker/run-command.sh -r ${TARGET_ARCH} -s ${PWD} -c "xvfb-run --server-args=$XVFB_ARGS npm test";
-    fi
+  - ./scripts/ci/test.sh -o $HOST_OS -r $TARGET_ARCH
+  - ./scripts/ci/build-installers.sh -o $HOST_OS -r $TARGET_ARCH
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: scripts/ci/deploy-aws-s3.sh -o $HOST_OS -r $TARGET_ARCH
+  on:
+    branch: master
 
 notifications:
   email: false
